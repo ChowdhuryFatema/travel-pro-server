@@ -30,8 +30,17 @@ async function run() {
     
     const tourSpotsCollection = client.db("touristsSpotsDB").collection("touristsSpots");
 
+    app.get('/touristsSpots', async(req, res) => {
+        const result = await tourSpotsCollection.find().toArray();
+        res.send(result) 
+    })
+
+    app.get('/touristsSpots/:email', async(req, res) => {
+        const email = req.params.email;
+        console.log(email)
+    })
+
     app.post('/touristsSpots', async(req, res) => {
-        
         const result = await tourSpotsCollection.insertOne(req.body);
         res.send(result);
     })
