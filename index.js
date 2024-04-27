@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -37,12 +37,27 @@ async function run() {
 
     app.get('/touristsSpots/:email', async(req, res) => {
         const email = req.params.email;
-        console.log(email)
+        const query = {user_email: email}
+        const result = await tourSpotsCollection.find(query).toArray();
+        res.send(result);
     })
+
+    // app.get('/touristsSpots/:id', async(req, res) => {
+    //   const id = req.params.id;
+    //   const query = {_id: new ObjectId(id)}
+    //   const result = await tourSpotsCollection.findOne(query)
+    // })
 
     app.post('/touristsSpots', async(req, res) => {
         const result = await tourSpotsCollection.insertOne(req.body);
         res.send(result);
+    })
+
+  
+
+    app.delete('/touristsSpots/:id', async(req, res) => {
+      const result = await tourSpotsCollection.deleteOne({_id: new ObjectId(req.params.id)})
+      res.send(result);
     })
 
 
