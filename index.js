@@ -29,37 +29,73 @@ async function run() {
 
     
     const tourSpotsCollection = client.db("touristsSpotsDB").collection("touristsSpots");
+    const countriesCollection = client.db("touristsSpotsDB").collection("countries");
 
     app.get('/touristsSpots', async(req, res) => {
         const result = await tourSpotsCollection.find().toArray();
         res.send(result) 
     })
 
+
     app.get('/touristsSpots/:email', async(req, res) => {
-        const email = req.params.email;
-        const query = {user_email: email}
-        const result = await tourSpotsCollection.find(query).toArray();
-        res.send(result);
+      const email = req.params.email;
+      const query = {user_email: email}
+      const result = await tourSpotsCollection.find(query).toArray();
+      res.send(result);
+  })
+
+    app.get('/touristsSpot/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await tourSpotsCollection.findOne(query);
+      res.send(result)
     })
 
-    // app.get('/touristsSpots/:id', async(req, res) => {
-    //   const id = req.params.id;
-    //   const query = {_id: new ObjectId(id)}
-    //   const result = await tourSpotsCollection.findOne(query)
-    // })
+
 
     app.post('/touristsSpots', async(req, res) => {
-        const result = await tourSpotsCollection.insertOne(req.body);
-        res.send(result);
+      const result = await tourSpotsCollection.insertOne(req.body);
+      res.send(result);
+  })
+
+
+    app.put('/touristsSpot/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = { upsert: true };
+      const updatedDetails = req.body;
+
+      
+      const tourSpots = {
+        $set: {
+          country_Name: updatedDetails.country_Name,
+          tourists_spot_name: updatedDetails.tourists_spot_name, 
+          location: updatedDetails.location, 
+          description: updatedDetails.description, 
+          average_cost: updatedDetails.average_cost, 
+          seasonality: updatedDetails.seasonality, 
+          travel_time: updatedDetails.travel_time,
+          totalVisitorsPerYea: updatedDetails.totalVisitorsPerYea,
+          image: updatedDetails.image
+        },
+      };
+
+      const result = await tourSpotsCollection.updateOne(filter, tourSpots, options);
+      res.send(result);
+
     })
 
-  
 
     app.delete('/touristsSpots/:id', async(req, res) => {
       const result = await tourSpotsCollection.deleteOne({_id: new ObjectId(req.params.id)})
       res.send(result);
     })
 
+
+    app.get('/countries', async(req, res) => {
+      const result = await countriesCollection.find().toArray();
+      res.send(result) 
+  })
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
