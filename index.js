@@ -58,7 +58,6 @@ async function run() {
       res.send(result);
   })
 
-
     app.put('/touristsSpot/:id', async(req, res) => {
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)}
